@@ -45,3 +45,7 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.project
+.settings/de.loskutov.anyedit.AnyEditTools.prefs
+Realign_trigger_rawfile_to_multifile.py
+*.pydevproject
