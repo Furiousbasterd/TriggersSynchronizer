@@ -89,14 +89,14 @@ class Synchronizer:
     
     def triggersCoverage(self):
         return {"Keeped" : len(self.keepedTriggers['Trigger'])/len(triggers.index)*100, "Rejected" : len(self.rejectedTriggers['Event'])/len(triggers.index)*100}
-    
-triggers = pd.read_excel('H:/Script_Elo/New_files/triggers_CP15_SAB_6_7_8_Oddball_vis.xlsx')
-artifacts = pd.read_excel('H:/Script_Elo/New_files/artefacts_CP15_SAB_6_7_8_Oddball_vis.xlsx')
-s = Synchronizer()
-s.synchronizeTriggersTime()
-#s.exportSynchronizedTriggers('H:/Script_Elo/New_files/Synchronized_triggers.xlsx')
-print(s.triggersCoverage())
-#exportSynchronizedTriggers('H:/Script_Elo/triggers_AA20_stim_s2_Synchronized.xlsx', df)
+
+if __name__ == "__main__":   
+    triggers = pd.read_excel('')
+    artifacts = pd.read_excel('')
+    s = Synchronizer()
+    s.synchronizeTriggersTime()
+    print(s.triggersCoverage())
+
 
 
 
