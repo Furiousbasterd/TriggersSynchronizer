@@ -31,6 +31,6 @@ It will contain 3 sheets:
   - keeped : the keeped triggers with the original artifacts boundaries in which it is contained and its original "Time(s)"
   - rejected : the triggers that were not contained in any of the artifacts boundaries.
 
-# If something seems fishy in the result
+# If something seems fishy with the result
 Give a try to the coverage function to see if every triggers are tested (keeped + rejected should give you 100%).
 Maybe I forgot something in my code, then let me know it by letting an issue ticket here.
