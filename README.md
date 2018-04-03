@@ -10,11 +10,11 @@ is keeped. A new "Time(s)" value is allocated to that trigger, synchronizing it 
 Pandas library, and files must use the Microsoft Excel filename extension. This script only uses the excel reader for now.
 Files must have at least these columns:
   - artifacts:
-    o Startkeep(s)
-    o Endkeep(s)
+    - Startkeep(s)
+    - Endkeep(s)
   - triggers:
-    o Time(s)
-    o Event (only if you want to keep an eye on wich trigger is wich)
+    - Time(s)
+    - Event (only if you want to keep an eye on wich trigger is wich)
 
 # How to use
 For now, you only have to add the path to your files and provide a path for the export. All methods names should
