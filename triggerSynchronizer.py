@@ -1,5 +1,7 @@
 import pandas as pd
 import pprint
+import os
+import sys
 
 
 class Synchronizer:
@@ -13,9 +15,9 @@ class Synchronizer:
         deltaStartEnd = 0
         deltaEndStart = 0
         actualTime = 0
-        for index,row in artifacts.iterrows():
+        for index,row in self.artifacts.iterrows():
             
-            trigToKeep = triggers[(triggers['Time(s)'] >= row['Startkeep(s)']) & (triggers['Time(s)'] <= row['Endkeep(s)'])]
+            trigToKeep = self.triggers[(self.triggers['Time(s)'] >= row['Startkeep(s)']) & (self.triggers['Time(s)'] <= row['Endkeep(s)'])]
             b = {
                 'left' : row['Startkeep(s)'],
                 'right' : row['Endkeep(s)']
@@ -26,16 +28,27 @@ class Synchronizer:
                 # Calculating delta between Start and End of the row
                 deltaStartEnd = row['Endkeep(s)'] - row['Startkeep(s)']
                 # Testing if there is a next row
-                if index+1 in artifacts['Startkeep(s)'].index:
+                if index+1 in self.artifacts['Startkeep(s)'].index:
                     #if the next row exist, we can obtain the delta between the actual Endkeep and the next start
-                    deltaEndStart = artifacts['Startkeep(s)'][index+1] - row['Endkeep(s)']
+                    deltaEndStart = self.artifacts['Startkeep(s)'][index+1] - row['Endkeep(s)']
                     actualTime+=deltaStartEnd + deltaEndStart
                     
                 else:
                     # if it does not, only the Start-end delta is added to the actual time
                     actualTime+=deltaStartEnd
-        self.rejectedTriggers = triggers.drop(self.toDrop)
+        self.rejectedTriggers = self.triggers.drop(self.toDrop)
+    
+    def importFiles(self,pathToTriggers,pathToArtifacts):
+        if not os.path.exists(pathToTriggers):
+            sys.exit('Trigger file does not exist')
+        else:
+            self.triggers = pd.read_excel(pathToTriggers)
 
+        if not os.path.exists(pathToArtifacts):
+            sys.exit('Artifacts file does not exist')
+        else:
+            self.artifacts = pd.read_excel(pathToArtifacts)
+               
     def exportSynchronizedTriggers(self,path):
         writer = pd.ExcelWriter(path)
         pd.DataFrame(data=self.synchronizedTriggers).to_excel(writer, 'Triggers',index=False)
@@ -61,7 +74,7 @@ class Synchronizer:
                 self.keepedTriggers['RightBoundary'].append(right)
                 self.keepedTriggers['Trigger'].append(t['Time(s)'])
                 self.keepedTriggers['Event'].append(t['Event'])
-                #print(str(index)+ " | "+t['Event'])
+
             elif index == lastIdx:
                 time += right - t['Time(s)']
                 self.synchronizedTriggers['Time(s)'].append(time)
@@ -70,7 +83,7 @@ class Synchronizer:
                 self.keepedTriggers['RightBoundary'].append(right)
                 self.keepedTriggers['Trigger'].append(t['Time(s)'])
                 self.keepedTriggers['Event'].append(t['Event'])
-                #print(str(index)+ " | "+t['Event'])
+
             else:
                 time += t['Time(s)'] - prevTrig['Time(s)']
                 prevTrig = t
@@ -80,20 +93,20 @@ class Synchronizer:
                 self.keepedTriggers['RightBoundary'].append(right)
                 self.keepedTriggers['Trigger'].append(t['Time(s)'])
                 self.keepedTriggers['Event'].append(t['Event'])
-                #print(str(index)+ " | "+t['Event'])
-            #print(prevTrig)
+
         return time
             
     def __str__(self):
         return pprint.pformat({"Synchronized" : pd.DataFrame(self.synchronizedTriggers).head(n=20), "Keeped" : pd.DataFrame(self.keepedTriggers).head(n=20),"Rejected" : pd.DataFrame(self.rejectedTriggers).head(n=20)})
     
     def triggersCoverage(self):
-        return {"Keeped" : len(self.keepedTriggers['Trigger'])/len(triggers.index)*100, "Rejected" : len(self.rejectedTriggers['Event'])/len(triggers.index)*100}
+        return {"Keeped" : len(self.keepedTriggers['Trigger'])/len(self.triggers.index)*100, "Rejected" : len(self.rejectedTriggers['Event'])/len(self.triggers.index)*100}
 
-if __name__ == "__main__":   
-    triggers = pd.read_excel('')
-    artifacts = pd.read_excel('')
+if __name__ == "__main__":
+    t = ''
+    a = ''   
     s = Synchronizer()
+    s.importFiles(t,a)
     s.synchronizeTriggersTime()
     print(s.triggersCoverage())
 
