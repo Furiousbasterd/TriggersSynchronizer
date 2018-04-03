@@ -13,9 +13,9 @@ class Synchronizer:
     
     def synchronizeTriggersTime(self):
         deltaStartEnd = 0
-        deltaEndStart = 0
+        #deltaEndStart = 0
         actualTime = 0
-        for index,row in self.artifacts.iterrows():
+        for row in self.artifacts.iterrows():
             
             trigToKeep = self.triggers[(self.triggers['Time(s)'] >= row['Startkeep(s)']) & (self.triggers['Time(s)'] <= row['Endkeep(s)'])]
             b = {
@@ -27,15 +27,8 @@ class Synchronizer:
             else:
                 # Calculating delta between Start and End of the row
                 deltaStartEnd = row['Endkeep(s)'] - row['Startkeep(s)']
-                # Testing if there is a next row
-                if index+1 in self.artifacts['Startkeep(s)'].index:
-                    #if the next row exist, we can obtain the delta between the actual Endkeep and the next start
-                    deltaEndStart = self.artifacts['Startkeep(s)'][index+1] - row['Endkeep(s)']
-                    actualTime+=deltaStartEnd + deltaEndStart
-                    
-                else:
-                    # if it does not, only the Start-end delta is added to the actual time
-                    actualTime+=deltaStartEnd
+                actualTime+=deltaStartEnd
+
         self.rejectedTriggers = self.triggers.drop(self.toDrop)
     
     def importFiles(self,pathToTriggers,pathToArtifacts):
@@ -108,6 +101,8 @@ if __name__ == "__main__":
     s = Synchronizer()
     s.importFiles(t,a)
     s.synchronizeTriggersTime()
+    o = ''
+    s.exportSynchronizedTriggers(o)
     print(s.triggersCoverage())
 
 
