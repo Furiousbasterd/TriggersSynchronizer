@@ -13,9 +13,8 @@ class Synchronizer:
     
     def synchronizeTriggersTime(self):
         deltaStartEnd = 0
-        #deltaEndStart = 0
         actualTime = 0
-        for row in self.artifacts.iterrows():
+        for index,row in self.artifacts.iterrows():
             
             trigToKeep = self.triggers[(self.triggers['Time(s)'] >= row['Startkeep(s)']) & (self.triggers['Time(s)'] <= row['Endkeep(s)'])]
             b = {
@@ -93,7 +92,7 @@ class Synchronizer:
         return pprint.pformat({"Synchronized" : pd.DataFrame(self.synchronizedTriggers).head(n=20), "Keeped" : pd.DataFrame(self.keepedTriggers).head(n=20),"Rejected" : pd.DataFrame(self.rejectedTriggers).head(n=20)})
     
     def triggersCoverage(self):
-        return {"Keeped" : len(self.keepedTriggers['Trigger'])/len(self.triggers.index)*100, "Rejected" : len(self.rejectedTriggers['Event'])/len(self.triggers.index)*100}
+        return pprint.pformat({"Keeped" : len(self.keepedTriggers['Trigger'])/len(self.triggers.index)*100, "Rejected" : len(self.rejectedTriggers['Event'])/len(self.triggers.index)*100})
 
 if __name__ == "__main__":
     t = ''
