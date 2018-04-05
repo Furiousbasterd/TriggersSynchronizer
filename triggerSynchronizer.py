@@ -54,37 +54,55 @@ class Synchronizer:
         prevTrig = "";
         lastIdx = trigs.index[-1]
         firstIdx = trigs.index[0]
-
-        for index,t in trigs.iterrows():
-            self.toDrop.append(index)
-            if index == firstIdx:
-                prevTrig = t
-                time += t['Time(s)'] - left
-                self.synchronizedTriggers['Time(s)'].append(time)
-                self.synchronizedTriggers['Event'].append(t['Event'])
-                self.keepedTriggers['LeftBoundary'].append(left)
-                self.keepedTriggers['RightBoundary'].append(right)
-                self.keepedTriggers['Trigger'].append(t['Time(s)'])
-                self.keepedTriggers['Event'].append(t['Event'])
-
-            elif index == lastIdx:
-                time += right - t['Time(s)']
-                self.synchronizedTriggers['Time(s)'].append(time)
-                self.synchronizedTriggers['Event'].append(t['Event'])
-                self.keepedTriggers['LeftBoundary'].append(left)
-                self.keepedTriggers['RightBoundary'].append(right)
-                self.keepedTriggers['Trigger'].append(t['Time(s)'])
-                self.keepedTriggers['Event'].append(t['Event'])
-
-            else:
-                time += t['Time(s)'] - prevTrig['Time(s)']
-                prevTrig = t
-                self.synchronizedTriggers['Time(s)'].append(time)
-                self.synchronizedTriggers['Event'].append(t['Event'])
-                self.keepedTriggers['LeftBoundary'].append(left)
-                self.keepedTriggers['RightBoundary'].append(right)
-                self.keepedTriggers['Trigger'].append(t['Time(s)'])
-                self.keepedTriggers['Event'].append(t['Event'])
+        if lastIdx == firstIdx:
+            '''
+            Handling the case where there is just one trigger between the two
+            artifact boundaries
+            '''
+            time += trigs['Time(s)'].values[0]-left
+            self.synchronizedTriggers['Time(s)'].append(time)
+            self.synchronizedTriggers['Event'].append(trigs['Event'].values[0])
+            self.keepedTriggers['LeftBoundary'].append(left)
+            self.keepedTriggers['RightBoundary'].append(right)
+            self.keepedTriggers['Trigger'].append(trigs['Time(s)'].values[0])
+            self.keepedTriggers['Event'].append(trigs['Event'].values[0])
+            time+= right - trigs['Time(s)'].values[0]  
+            self.toDrop.append(firstIdx)          
+        else:
+            '''
+            Handling the case where there are several artifact between the two
+            boundaries
+            '''    
+            for index,t in trigs.iterrows():
+                self.toDrop.append(index)
+                if index == firstIdx:
+                    prevTrig = t
+                    time += t['Time(s)'] - left
+                    self.synchronizedTriggers['Time(s)'].append(time)
+                    self.synchronizedTriggers['Event'].append(t['Event'])
+                    self.keepedTriggers['LeftBoundary'].append(left)
+                    self.keepedTriggers['RightBoundary'].append(right)
+                    self.keepedTriggers['Trigger'].append(t['Time(s)'])
+                    self.keepedTriggers['Event'].append(t['Event'])
+    
+                elif index == lastIdx:
+                    time += right - t['Time(s)']
+                    self.synchronizedTriggers['Time(s)'].append(time)
+                    self.synchronizedTriggers['Event'].append(t['Event'])
+                    self.keepedTriggers['LeftBoundary'].append(left)
+                    self.keepedTriggers['RightBoundary'].append(right)
+                    self.keepedTriggers['Trigger'].append(t['Time(s)'])
+                    self.keepedTriggers['Event'].append(t['Event'])
+    
+                else:
+                    time += t['Time(s)'] - prevTrig['Time(s)']
+                    prevTrig = t
+                    self.synchronizedTriggers['Time(s)'].append(time)
+                    self.synchronizedTriggers['Event'].append(t['Event'])
+                    self.keepedTriggers['LeftBoundary'].append(left)
+                    self.keepedTriggers['RightBoundary'].append(right)
+                    self.keepedTriggers['Trigger'].append(t['Time(s)'])
+                    self.keepedTriggers['Event'].append(t['Event'])
 
         return time
             
